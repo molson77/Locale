@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Locale</string>
+    <string name="city_prompt">Select a city to see what\'s around!</string>
+    <string name="whats_around">What\'s around:</string>
+</resources>
