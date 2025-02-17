@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = BusinessDetailsViewModel.Factory::class)
 class BusinessDetailsViewModel @AssistedInject constructor(
@@ -29,14 +28,20 @@ class BusinessDetailsViewModel @AssistedInject constructor(
         fun create(id: String): BusinessDetailsViewModel
     }
 
+    private val _uiState = MutableStateFlow(BusinessDetailsScreenUiState())
+    val uiState: StateFlow<BusinessDetailsScreenUiState> = _uiState.asStateFlow()
+
     init {
         getBusinessDetails(id)
     }
 
-    private val _uiState = MutableStateFlow(BusinessDetailsScreenUiState())
-    val uiState: StateFlow<BusinessDetailsScreenUiState> = _uiState.asStateFlow()
-
-    fun getBusinessDetails(id: String) = viewModelScope.launch {
+    private fun getBusinessDetails(id: String) = viewModelScope.launch {
+        _uiState.update {
+            return@update it.copy(
+                isLoading = true,
+                error = null
+            )
+        }
         if (id.isEmpty()) {
             _uiState.update {
                 return@update it.copy(
@@ -46,13 +51,6 @@ class BusinessDetailsViewModel @AssistedInject constructor(
             }
         } else {
             try {
-                _uiState.update {
-                    return@update it.copy(
-                        isLoading = true,
-                        error = null
-                    )
-                }
-
                 val businessDetails = yelpFusionRepository.getBusinessDetails(id)
 
                 if (businessDetails.isSuccessful) {

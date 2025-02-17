@@ -3,11 +3,9 @@ package com.example.locale.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.locale.data.db.LikedBusiness
-import com.example.locale.data.db.LikedBusinessDao
 import com.example.locale.data.db.LikedBusinessRepository
 import com.example.locale.data.model.Business
 import com.example.locale.network.YelpFusionRepository
-import com.example.locale.network.YelpFusionService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,8 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.Response
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = BusinessViewModel.Factory::class)
 class BusinessViewModel @AssistedInject constructor(
@@ -33,7 +29,6 @@ class BusinessViewModel @AssistedInject constructor(
         fun create(location: String): BusinessViewModel
     }
 
-    // TODO: Fix uistate collection with assisted injection
     private val _uiState = MutableStateFlow(BusinessScreenUiState())
     val uiState: StateFlow<BusinessScreenUiState> = _uiState.asStateFlow()
 
@@ -57,15 +52,15 @@ class BusinessViewModel @AssistedInject constructor(
             val businessSearchResponse = yelpFusionRepository.getBusinessesByLocationName(location)
             if(businessSearchResponse.isSuccessful) {
                 businessSearchResponse.body()?.let { response ->
-                    //val likedBusinesses = likedBusinessRepository.getAll()
-                    //val updatedBusinesses = updatedBusinessesWithLikes(
-                    //    response.businesses,
-                    //    likedBusinesses
-                    //)
+                    val likedBusinesses = likedBusinessRepository.getAll()
+                    val updatedBusinesses = updatedBusinessesWithLikes(
+                        response.businesses,
+                        likedBusinesses
+                    )
                     _uiState.update {
                         return@update it.copy(
                             isLoading = false,
-                            businesses = response.businesses,
+                            businesses = updatedBusinesses,
                             error = ""
                         )
                     }
@@ -85,14 +80,14 @@ class BusinessViewModel @AssistedInject constructor(
                     error = "Error - HTTP Exception"
                 )
             }
-        /*} catch (e: Throwable) {
+        } catch (e: Throwable) {
             _uiState.update {
                 return@update it.copy(
                     isLoading = false,
                     businesses = listOf(),
                     error = "Error - ${e.message}"
                 )
-            }*/
+            }
         }
     }
 
@@ -101,7 +96,7 @@ class BusinessViewModel @AssistedInject constructor(
      */
 
     // Updates current UIState Businesses list with correctly attributed liked status
-    private suspend fun refreshLikedBusinesses() {
+    fun refreshLikedBusinesses() = viewModelScope.launch {
         val likedBusinesses = likedBusinessRepository.getAll()
         _uiState.update {
             val updatedBusinesses = updatedBusinessesWithLikes(

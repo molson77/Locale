@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 val LocaleGreen = Color(0xFF32AD37)
 val LocaleGreenSec = Color(0xFF2C9131)
 val LocaleBackground = Color(0xFFE9E9E9)
-val LocaleTertiary = Color(0xFFB6B6B6)
+val LocaleTertiary = Color(0xFFE2E2E2)
 
 val LocaleDarkGreen = Color(0xFF64D168)
 val LocaleDarkGreenSec = Color(0xFF49B64E)

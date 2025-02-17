@@ -1,5 +1,6 @@
 package com.example.locale.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,28 +22,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.example.locale.R
-import com.example.locale.data.model.Business
 import com.example.locale.data.model.BusinessDetails
-import com.example.locale.data.model.Category
-import com.example.locale.data.model.Coordinates
-import com.example.locale.data.model.Location
-import com.example.locale.ui.theme.LocaleTheme
 import com.example.locale.ui.viewmodels.BusinessDetailsScreenUiState
 import com.example.locale.ui.viewmodels.BusinessDetailsViewModel
-import com.example.locale.ui.viewmodels.BusinessScreenUiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
 fun BusinessDetailsScreen(
@@ -119,8 +112,13 @@ fun BusinessDetails(
             modifier = Modifier.fillMaxHeight(0.38F)
         ) {
             AsyncImage(
-                model = businessDetails.imageUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(businessDetails.imageUrl)
+                    .build(),
                 contentDescription = "Business Image",
+                onError = {
+                    Log.d("Coil", it.result.toString())
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(36.dp)
