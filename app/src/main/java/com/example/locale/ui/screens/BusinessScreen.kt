@@ -1,6 +1,7 @@
 package com.example.locale.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -179,7 +180,9 @@ fun BusinessItem(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(140.dp)) {
+                    .height(140.dp)
+                    .background(MaterialTheme.colorScheme.onTertiary)
+            ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(business.imageUrl)
@@ -188,7 +191,8 @@ fun BusinessItem(
                               Log.d("Coil", it.result.toString())
                     },
                     contentDescription = "Business Image",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
             }
             Row(

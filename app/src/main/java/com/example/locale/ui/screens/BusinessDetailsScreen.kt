@@ -1,6 +1,7 @@
 package com.example.locale.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -109,19 +110,22 @@ fun BusinessDetails(
         modifier = Modifier.fillMaxSize()
     ) {
         Box(
-            modifier = Modifier.fillMaxHeight(0.38F)
+            modifier = Modifier
+                .fillMaxHeight(0.38F)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(businessDetails.imageUrl)
                     .build(),
                 contentDescription = "Business Image",
+                error = painterResource(id = R.drawable.error),
                 onError = {
                     Log.d("Coil", it.result.toString())
                 },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(36.dp)
+                    .background(MaterialTheme.colorScheme.onTertiary)
                     .clip(RoundedCornerShape(corner = CornerSize(18.dp)))
             )
         }
@@ -213,13 +217,27 @@ fun BusinessDetails(
             .fillMaxWidth()
         ) {
             Column {
+                val displayLocation: String =
+                    if (businessDetails.location?.displayAddress != null &&
+                        businessDetails.location.displayAddress.isNotEmpty()) {
+                        businessDetails.location.displayAddress.joinToString(", ") ?: ""
+                    } else if(
+                        businessDetails.location?.address1 != null &&
+                        businessDetails.location.city != null &&
+                        businessDetails.location.state != null) {
+
+                        businessDetails.location.address1 + ", " +
+                                businessDetails.location.city + ", " +
+                                businessDetails.location.state
+                    } else {
+                        ""
+                    }
                 Text(
-                    text = businessDetails.location?.displayAddress?.joinToString(", ") ?: "",
+                    text = displayLocation,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     fontSize = TextUnit(16F, TextUnitType.Sp),
                     textAlign = TextAlign.Left,
-                    //lineHeight = TextUnit(13F, TextUnitType.Sp),
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }

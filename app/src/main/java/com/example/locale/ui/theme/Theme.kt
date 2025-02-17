@@ -19,15 +19,8 @@ private val DarkColorScheme = darkColorScheme(
     primary = LocaleDarkGreen,
     secondary = LocaleDarkGreenSec,
     tertiary = LocaleDarkTertiary,
+    onTertiary = LocaleDarkOnTertiary,
     background = LocaleDarkBackground
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = LocaleGreen,
-    secondary = LocaleGreenSec,
-    tertiary = LocaleTertiary,
-    background = LocaleBackground
-
 )
 
 @Composable
@@ -36,17 +29,14 @@ fun LocaleTheme(
     // Dynamic color is available on Android 12+
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = DarkColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
             window.navigationBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
 
